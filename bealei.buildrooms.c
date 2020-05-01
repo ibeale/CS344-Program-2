@@ -22,7 +22,7 @@ char* createDirectory(void){
     int file_descriptor;
     char path_buffer[STR_BUF];
     memset(path_buffer, '\0', sizeof(path_buffer));
-    sprintf(path_buffer, "bealei.rooms.%d", pid);
+    sprintf(path_buffer, "bealei.rooms.%d/", pid);
     mkdir(path_buffer, 0755);
 	return path_buffer;
 }
@@ -147,13 +147,28 @@ void connectallrooms(struct Room* allrooms[7]){
 }
 
 
-makefile(char path[STR_BUF]){
-	char* word = "hello";
-	strcat(path, word);
+void makefile(char path[STR_BUF], struct Room* allrooms[7]){
+	char name[STR_BUF];
+	char content[STR_BUF];
 	int i;
-	for(i = 0; i < 30; i++){
-		printf("%c\n",path[i]);
+	int j;
+	int k;
+	for(i=0;i<7;i++){
+		memset(name, '\0', sizeof(name));
+		strcpy(name, path);
+		strcat(name, allrooms[i]->name);
+		strcat(name, "_room");
+		FILE* fp;
+		fp = fopen(name, "w");
+        fprintf(fp,"ROOM NAME: %s\n", allrooms[i]->name);
+		for(j=0;j<allrooms[i]->num_connections;j++){
+			fprintf(fp, "CONNECTION %d: %s\n",j+1, allrooms[i]->connections[j]->name);
+		}
+		fprintf(fp,"ROOM_TYPE: %s\n", allrooms[i]->roomtype);
+		fclose(fp);
 	}
+	//
+
 	// FILE *fp;
 	// fp = fopen("")
 }
@@ -169,17 +184,7 @@ int main()
 	connectallrooms(allrooms);
 	char path[STR_BUF];
 	strcpy(path,createDirectory());
-	makefile(path);
-
-	int j;
-	for (i = 0; i < 7; i++){
-        printf("ROOM NAME: %s\n", allrooms[i]->name);
-		for(j=0;j<allrooms[i]->num_connections;j++){
-			printf("CONNECTION %d: %s\n",j+1, allrooms[i]->connections[j]->name);
-		}
-		printf("ROOM_TYPE: %s\n", allrooms[i]->roomtype);
-		printf("\n");
-    }
+	makefile(path, allrooms);
 	for (i = 0; i < 7; i++){
 		free(allrooms[i]);
 	}
