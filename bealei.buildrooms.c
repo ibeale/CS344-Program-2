@@ -129,13 +129,13 @@ void connectallrooms(struct Room* allrooms[7]){
 	int j = 0;
 	int arr[7] = {0,1,2,3,4,5,6};
 	for(i=0;i<7;i++){
-		num_connections = (rand()%4) + 2;
+		num_connections = (rand()%3) + 3;
 		shufflearr(arr);
-		for(j=0;j<num_connections;j++){
+		for(j=num_connections-allrooms[i]->num_connections;j>0;j--){
 			if(i==arr[j]){
-				j++;
-				if(j > 6){
-					j=0;
+				j--;
+				if(j < 0){
+					j=6;
 				}
 			}
 			if(!(areconnected(allrooms[i],allrooms[arr[j]]))){
